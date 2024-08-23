@@ -50,7 +50,7 @@ async def purchase(
 
     # Отправляем эти же данные на products-api
     order_data = {
-        "order_date": order_date.strftime.isoformat(),  # Используем текущее время в формате 2024-08-23 11:11:11
+        "order_date": order_date.strftime.strftime('%Y-%m-%d %H:%M:%S'),  # Используем текущее время в формате 2024-08-23 11:11:11
         "order_sum": payload.quantity * product_price,
         "product_id": payload.product_id,
         "product_quantity": payload.quantity

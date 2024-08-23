@@ -14,3 +14,13 @@ class Users(Base):
     password = Column(String)
     role = Column(String)
     access_token = Column(String)
+
+
+class PurchaseHistory(Base):
+    __tablename__ = "purchase_history"
+
+    order_id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer)
+    order_date = Column(DateTime(timezone=True))
+    product_quantity = Column(Integer)
+    order_sum = Column(Integer)

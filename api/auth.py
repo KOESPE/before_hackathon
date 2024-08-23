@@ -58,3 +58,24 @@ async def auth(credentials: HTTPAuthorizationCredentials = Depends(security),
         return f'Ваша почта: {user_data.login}'
     else:
         raise HTTPException(status_code=401, detail="Invalid login or password")
+
+
+@auth_router.post('/change_password',
+                  responses={
+                      200: {"description": "OK"},
+                      401: {"description": "Invalid credentials"},
+                      404: {"description": "User not found"}
+                  })
+async def change_password(payload: payloads.ChangePasswordForm,
+                          session: AsyncSession = Depends(get_session_fastapi)):
+    # Проверяем по логину и паролю
+    user_data_query = select(Users).where(Users.login == payload.login,
+                                           Users.password == payload.password)
+    user_data: Users = await session.scalar(user_data_query)
+
+    if user_data is not None:
+        user_data.password = payload.new_password
+        await session.commit()
+        return "Password changed successfully"
+    else:
+        raise HTTPException(status_code=401, detail="Invalid credentials")

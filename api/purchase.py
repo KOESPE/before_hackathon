@@ -65,8 +65,50 @@ async def purchase(
                 return Response(status_code=400)
 
 
+def get_product_by_id(product_id):
+    for product in products_vika:
+        if product['product_id'] == product_id:
+            return product
+    return None
 
-
+products_vika = [
+    {
+      "product_id": 1,
+      "product_name": "Хлеб",
+      "product_description": "Продукция Бежицкого хлебного комбината",
+      "product_price": 34
+    },
+    {
+      "product_id": 2,
+      "product_name": "Молоко",
+      "product_description": "Продукция компании Милград",
+      "product_price": 87
+    },
+    {
+      "product_id": 3,
+      "product_name": "Котлеты говяжьи",
+      "product_description": "Продукция компании Мираторг",
+      "product_price": 359
+    },
+    {
+      "product_id": 4,
+      "product_name": "Кола",
+      "product_description": "Продукция компании Брянскпиво",
+      "product_price": 63
+    },
+    {
+      "product_id": 5,
+      "product_name": "Чипсы картофельные",
+      "product_description": "Чипсы картофельные",
+      "product_price": 150
+    },
+    {
+      "product_id": 6,
+      "product_name": "Пиво темное нефильтрованное",
+      "product_description": "Продукция компании Балтика",
+      "product_price": 110
+    }
+  ]
 
 # Метод получения истории заказов из базы данных:
 # 1. Получаем все заказы из бд. 2. На каждый PurchaseHistory.product_id берем данные из products-api
@@ -83,20 +125,17 @@ async def purchase_history(
     # На каждый PurchaseHistory.product_id берем данные из products-api
     async with aiohttp.ClientSession() as aiohttp_session:
         for purchase in purchases:
-            async with aiohttp_session.get(
-                    f'https://products-api-five.vercel.app/products/{purchase.product_id}') as response:
-                if response.status == 200:
-                    data = await response.json()
-                    product_name = data["product"]["product_name"]
-                    product_description = data["product"]["product_description"]
 
-                    purchase_details.append({
-                        "order_date": purchase.order_date.isoformat(),
-                        "product_id": purchase.product_id,
-                        "product_name": product_name,
-                        "product_description": product_description,
-                        "order_sum": purchase.order_sum,
-                    })
+            product_name = (get_product_by_id(purchase.product_id))["product_name"]
+            product_description = (get_product_by_id(purchase.product_id))["product_description"]
+
+            purchase_details.append({
+                "order_date": purchase.order_date.isoformat(),
+                "product_id": purchase.product_id,
+                "product_name": product_name,
+                "product_description": product_description,
+                "order_sum": purchase.order_sum,
+            })
 
     return JSONResponse(content=purchase_details, status_code=200)
 

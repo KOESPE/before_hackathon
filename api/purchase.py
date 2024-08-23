@@ -38,6 +38,7 @@ async def purchase(
                 data = await response.json()
                 product_price = data["product"]["product_price"]
 
+    order_date = datetime.datetime.now()
     purchase = PurchaseHistory(
         product_id=payload.product_id,
         order_date=datetime.datetime.now(),
@@ -47,7 +48,24 @@ async def purchase(
     session.add(purchase)
     await session.commit()
 
-    return Response(status_code=200)
+    # Отправляем эти же данные на products-api
+    order_data = {
+        "order_date": order_date.strftime('%Y-%m-%d %H:%M:%S'),  # Используем текущее время в формате 2024-08-23 11:11:11
+        "order_sum": payload.quantity * product_price,
+        "product_id": payload.product_id,
+        "product_quantity": payload.quantity
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.post('https://adm-metrics-api.vercel.app/orders', json=order_data) as response:
+            if response.status == 200:
+                response_data = await response.json()
+                print(response_data)
+                return Response(status_code=200)
+            else:
+                return Response(status_code=400)
+
+
+
 
 
 # Метод получения истории заказов из базы данных:

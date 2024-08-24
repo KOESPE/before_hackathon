@@ -28,7 +28,3 @@ async def get_db_data():
 
 app.include_router(auth_router)
 app.include_router(purchase_router)
-
-
-if __name__ == "__main__":
-    uvicorn.run(app)

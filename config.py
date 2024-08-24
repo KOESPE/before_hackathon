@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DATABASE: str
 
-    # class Config:
-    #     env_file = '.env'
-    #     env_file_encoding = 'utf-8'
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
 
     @property
     def DB_URL(self) -> str:

@@ -139,3 +139,30 @@ async def purchase_history(
 
     return JSONResponse(content=purchase_details, status_code=200)
 
+@purchase_router.post('/postback')
+async def postback(request: Request):
+    hash_name = request.query_params.get("hash_name")  # Название ссылки
+    source_name = request.query_params.get("source_name")  # Источник
+    event = request.query_params.get("event")  # Событие
+    amount = request.query_params.get("amount")  # Значение события
+    country = request.query_params.get("country")  # Страна
+    sub1 = request.query_params.get("sub1")  # Telegram ID пользователя
+    # Формируем строку для записи
+    log_entry = (
+        f"hash_name: {hash_name}\n"
+        f"source_name: {source_name}\n"
+        f"event: {event}\n"
+        f"amount: {amount}\n"
+        f"country: {country}\n"
+        f"sub1: {sub1}\n"
+        "-----------------------\n"
+    )
+
+    # Записываем данные в файл
+    log_file_path = 'postback_log.txt'  # Путь к файлу
+
+    with open(log_file_path, 'a') as log_file:
+        log_file.write(log_entry)
+
+    return {"status": "success"}
+

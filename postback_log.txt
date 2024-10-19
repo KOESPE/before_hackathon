@@ -1,0 +1,7 @@
+hash_name: None
+source_name: None
+event: None
+amount: None
+country: None
+sub1: None
+-----------------------
